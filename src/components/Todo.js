@@ -1,9 +1,19 @@
 import React from 'react';
 import cancelImage from '../assets/cancel.png'
+import { useDeleteTodoMutation } from '../features/api/apiSlice';
 
 export default function Todo({todo}) {
-    const {} = todo;
-    
+    const {id, text} = todo;
+
+    const [deleteTodo, {isLoading, isError, isSuccess}] = useDeleteTodoMutation();
+
+    const handleDelete = () => {
+        if(id){
+            deleteTodo(id)
+        }
+    };
+
+
   return (
     <div
         className="flex justify-start items-center p-2 hover:bg-gray-100 hover:transition-all space-x-4 border-b border-gray-400/20 last:border-0"
@@ -24,7 +34,7 @@ export default function Todo({todo}) {
         </div>
 
         <div className="select-none flex-1 line-through">
-            Learn React from Learn with Sumit YouTube Channel
+            {text}
         </div>
 
         <div
@@ -40,6 +50,7 @@ export default function Todo({todo}) {
         ></div>
 
         <img
+            onClick={handleDelete}
             src={cancelImage}
             className="flex-shrink-0 w-4 h-4 ml-2 cursor-pointer"
             alt="Cancel"
