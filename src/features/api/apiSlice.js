@@ -7,12 +7,27 @@ export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "http://localhost:9000"
     }),
-    tagTypes: ["Todo"],
+    tagTypes: ["Todos"],
     endpoints: (builder)=> ({
         getTodos: builder.query({
-            query: ()=> '/todos',
-            keepUnusedDataFor: 10,
-            providesTags: ["Todo"]
+            query: ({ status, colors })=> {
+                let queryString = '';
+                if( status === 'Incomplete'){
+                    queryString += `&complete=false`;
+                }
+                if ( status === 'Complete'){
+                    queryString += `&complete=true`
+                }
+                if( colors.length > 0 ){
+                    colors.forEach((color)=>{
+                        queryString += `&color=${color}`
+                    })
+                }
+
+                return `/todos?_sort=id&_order=desc${queryString}`
+            },
+            keepUnusedDataFor: 600,
+            providesTags: ["Todos"]
         }),
         addTodo: builder.mutation({
             query: (data) => ({
@@ -20,18 +35,31 @@ export const apiSlice = createApi({
                 method: "POST",
                 body:  data
             }),
-            invalidatesTags: ["Todo"]
+            invalidatesTags: ["Todos"]
+        }),
+        editTodo: builder.mutation({
+            query: ({ id, data }) => ({
+              url: `/todos/${id}`,
+              method: 'PATCH',
+              body: data,
+            }),
+            invalidatesTags: ['Todos'],
         }),
         deleteTodo: builder.mutation({
             query: (id)=> ({
                 url: `/todos/${id}`,
                 method: "DELETE"
             }),
-            invalidatesTags: ["Todo"]
-        })
+            invalidatesTags: ["Todos"]
+        }),
+
         
     })
 })
 
 
-export const { useGetTodosQuery ,  useAddTodoMutation, useDeleteTodoMutation } = apiSlice;
+export const { 
+    useGetTodosQuery ,  
+    useAddTodoMutation, 
+    useDeleteTodoMutation,
+    useEditTodoMutation } = apiSlice;

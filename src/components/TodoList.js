@@ -1,10 +1,12 @@
 import React from 'react'
+import { useSelector } from 'react-redux';
 import { useGetTodosQuery } from '../features/api/apiSlice'
 import Todo from './Todo'
 
 export default function TodoList() {
+  const { status, colors} = useSelector((state)=> state.filter )
 
-  const {data: todos, isLoading, isError} = useGetTodosQuery();
+  const {data: todos, isLoading, isError} = useGetTodosQuery({status, colors});
 
   let content = null;
 
